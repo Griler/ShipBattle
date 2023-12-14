@@ -8,6 +8,7 @@
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 const Emitter = require("EventEmitter")
+const EVENT_NAME = require("NAME_EVENT")
 cc.Class({
     extends: cc.Component,
 
@@ -39,16 +40,18 @@ cc.Class({
                     .then(cc.tween().to(1.25, {scale: 0.5}, {easing: "sineIn"})),
                 cc.tween().to(2, {angle: 360 * 7}))
             .call(() => {
-                cc.log(this.node.position);
-                this.onDestroy();
+                //cc.log(this.node.position);
                 this.playAnimationtileTarget(data.targetTile)
+                this.onDestroy();
             })
             .start();
     },
     playAnimationtileTarget(tileTarget) {
-        cc.log(tileTarget)
         tileTarget.color = cc.Color.RED;
         tileTarget.getComponent("Tile").playAnimationAndSound();
+        let hasShip = tileTarget.getComponent("Tile").hasShip;
+        if(hasShip)Emitter.instance.emit(EVENT_NAME.FINISH_SHOOT,true)
+        else Emitter.instance.emit(EVENT_NAME.FINISH_SHOOT,false)
     },
     onDestroy() {
         this.node.destroy();
