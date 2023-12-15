@@ -21,53 +21,30 @@ cc.Class({
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
+        this.bom;
         this.isHit = false;
         Emitter.instance.registerEvent(EVENT_NAME.PLAY_ANI, this.playAnimation.bind(this));
+        Emitter.instance.registerEvent(EVENT_NAME.DESTROY_ANI_NODE, this.destroyNode.bind(this));
         this.animation = null;
     },
     playAnimation(data) {
-        cc.log(data)
-        if (data.isHit) {
-            this.isHit = data.isHit
-            let bom = cc.instantiate(this.bomPrefab)
-            this.animation = bom.getComponent(cc.Animation);
-            this.animation.on('finished', function (a) {
-                cc.log(a)
-                Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, true);
-                //else Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, false)
-                bom.destroy();
-            });
-            bom.setParent(this.node.parent.parent);
-            bom.position = data.worldPosition;
-            bom.getComponent(cc.Animation).play('explosion');
-            //Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, true);
-        } else {
-            let bom = cc.instantiate(this.bomPrefab)
-            this.animation = bom.getComponent(cc.Animation);
-            this.animation.on('finished', function (a) {
-                cc.log(a)
-                Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, false)
-                //else Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, false)
-                bom.destroy();
-            });
-            bom.setParent(this.node.parent.parent);
-            bom.position = data.worldPosition;
-            bom.getComponent(cc.Animation).play('explosion');
+        this.isHit = data.isHit
+        this.bom = cc.instantiate(this.bomPrefab);
+        this.bom.setParent(this.node.parent.parent)
+        this.bom.position = data.worldPosition
+        if(this.isHit){
+            let myanimation = this.bom.getComponent(cc.Animation);
+            myanimation.play(myanimation.getClips()[0].name)
+            Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, true);
+        }else {
+            let myanimation = this.bom.getComponent(cc.Animation);
+            myanimation.play(myanimation.getClips()[1].name)
+            Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, false)
         }
+        cc.log( this.bom.parent)
     },
-/*    onAnimationFinished() {
-        cc.log(this)
-        //this.isHit = data.isHit
-        if (this.isHit) Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, true);
-        else Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, false)
-    },*/
-    onDestroy() {
-        this.animation.off('finished', this.onAnimationFinished, this);
-
-    },
-    start() {
-
-    },
-
+    destroyNode(){
+        this.bom.destroy()
+    }
     // update (dt) {},
 });

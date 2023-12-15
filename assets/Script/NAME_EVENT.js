@@ -8,5 +8,6 @@ const eventName= {
     SEND_RESULT:"SEND_RESULT",
     CHECK_POSITION:"CHECK_POSITION",
     PLAY_ANI:"PLAY_ANI",
+    DESTROY_ANI_NODE:"DESTROY_ANI_NODE"
 }
 module.exports = eventName;

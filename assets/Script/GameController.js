@@ -26,9 +26,7 @@ cc.Class({
     onLoad() {
         this.playerId = 0;
         this.enemyId = 1;
-        //Emitter.instance.registerEvent("spawnPrefab", this.spawnPrefab.bind(this))
-        //Emitter.instance.registerEvent(EVENT_NAME.IS_SHOOT_SHIP, this.checkShootHitShip.bind(this))
-       // Emitter.instance.registerOnce(EVENT_NAME.CHANGE_SCENE, this.changeScene.bind(this))
+        Emitter.instance.registerEvent(EVENT_NAME.CHANGE_SCENE, this.changeScene.bind(this))
         Emitter.instance.registerEvent(EVENT_NAME.SEND_RESULT, this.playAnimation.bind(this))
         this.fsm = new StateMachine({
             init: 'init',
@@ -40,7 +38,7 @@ cc.Class({
             methods: {
                 onChangePlayerScene: this.onChangePlayerScene.bind(this),
                 onChangeEnemyScene: this.onChangeEnemyScene.bind(this),
-                onChangeEndScene: this.onChangeEndScene.bind(this),
+                //onChangeEndScene: this.onChangeEndScene.bind(this),
                 onEnterEnemyScene: this.onEnterEnemyScene.bind(this),
                 onEnterPlayerScene: this.onEnterPlayerScene.bind(this)
             }
@@ -49,39 +47,30 @@ cc.Class({
     },
     onChangePlayerScene() {
         cc.log("chuyen player");
-        /*        this.changeSceneNode.opacity = 200;
-                this.changeSceneNode.getChildByName("Label").getComponent(cc.Label).string = "Your Turn"
-                cc.tween(this.changeSceneNode)
-                    .to(2, {opacity: 0}).start();
-                this.mapPlayer.active = false;
-                this.mapEnemy.active = true;*/
+        this.mapPlayer.active = false;
+        this.mapEnemy.active = true
+
     },
     onChangeEnemyScene() {
         cc.log("chuyen enemy");
-
-        /*        this.changeSceneNode.opacity = 200;
-                this.changeSceneNode.getChildByName("Label").getComponent(cc.Label).string = "Enemy Turn"
-                cc.tween(this.changeSceneNode)
-                    .to(2, {opacity: 0}).start();
-                this.mapPlayer.active = true;
-                this.mapEnemy.active = false;*/
+        this.mapPlayer.active = true;
+        this.mapEnemy.active = false;
     },
     onEnterEnemyScene() {
         cc.log("hello enemy");
-        Emitter.instance.registerEvent(EVENT_NAME.POSITION, (data) => {
+        //bug
+        Emitter.instance.registerOnce(EVENT_NAME.POSITION, (data) => {
             data.playerId = this.playerId;
             Emitter.instance.emit(EVENT_NAME.CHECK_POSITION, data)
         })
     },
     onEnterPlayerScene() {
         cc.log("hello player ");
-        Emitter.instance.registerEvent(EVENT_NAME.POSITION, (data) => {
+        //bug
+        Emitter.instance.registerOnce(EVENT_NAME.POSITION, (data) => {
             data.playerId = this.enemyId;
             Emitter.instance.emit(EVENT_NAME.CHECK_POSITION, data)
         })
-    },
-    onChangeEndScene() {
-
     },
     playAnimation(data) {
         cc.log('send result: ' + data)
@@ -97,15 +86,13 @@ cc.Class({
         }
     },
     changeScene(data) {
-        cc.log(this.mapEnemy.active)
+        cc.log("map quái: "+this.mapEnemy.active)
         if (this.mapEnemy.active === data) {
             cc.log("đổi enemy")
-           // this.fsm.changeEnemyScene()
+            this.fsm.changeEnemyScene()
         } else {
             cc.log("đổi player")
-            //this.fsm.changePlayerScene()
+            this.fsm.changePlayerScene()
         }
     },
-    update(){
-    }
 });

@@ -16,24 +16,8 @@ cc.Class({
     },
     onLoad() {
         this.node.on("mousedown", this.onMouseDown, this);
-        this.mapController = this.node.getComponent("MapController")
-        this.hasShotInTile = false;
-        this.mousePosition = cc.v2(0, 0);
-        for (let i = 1; i < 82; i++) {
-            let childNode = cc.instantiate(this.spritePrefab);
-            if (i % 2 === 0) {
-                childNode.getComponent("Tile").hasShip = true;
-            }
-            childNode.setParent(this.node)
-        }
-        for (let child of this.node.getChildren()) {
-            child.on(cc.Node.EventType.MOUSE_ENTER, this.onHoverChild, this);
-            child.on(cc.Node.EventType.MOUSE_LEAVE, this.onLeftHoverChild, this);
-        }
-        //Emitter.instance.registerEvent("takePosition", this.onClick.bind(this));
-
     },
-    onClick(data) {
+    /*onClick(data) {
         cc.log(data)
         if (this.hasShotInTile) return;
         if (this.node.getBoundingBoxToWorld().contains(data)) {
@@ -76,16 +60,15 @@ cc.Class({
             }
         }
         return null;
-    },
+    },*/
     onMouseDown(event) {
+        if (event.getButton() !== cc.Event.EventMouse.BUTTON_LEFT) return;
         this.mousePosition = event.getLocation();
-        const oject = {
+        const object = {
             playerId:0,
             position:this.mousePosition
         }
-        Emitter.instance.emit(EVENT_NAME.POSITION,oject)
-        if (event.getButton() !== cc.Event.EventMouse.BUTTON_LEFT) return;
-        this.onClick(this.mousePosition)
+        Emitter.instance.emit(EVENT_NAME.POSITION,object)
         event.stopPropagation();
     },
 });

@@ -30,7 +30,6 @@ cc.Class({
     },
     onAttack(data) {
         cc.log(data);
-        //this.node.parent.convertToNodeSpaceAR(cc.v2(data.positionToTarget.x,data.positionToTarget.y))
         cc.tween(this.node)
             .delay(0.94)
             .parallel(
@@ -48,14 +47,8 @@ cc.Class({
     },
     playAnimationtileTarget(data) {
         Emitter.instance.emit(EVENT_NAME.PLAY_ANI,data)
-       /* tileTarget.color = cc.Color.RED;
-        tileTarget.getComponent("Tile").playAnimationAndSound();
-        let hasShip = tileTarget.getComponent("Tile").hasShip;*/
-        // if(data.isHit)Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP,true)
-        // else Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP,false)
     },
     onDestroy() {
-        //this.animation.off('finished', this.onAnimationFinished, this);
         cc.log("bom xoá")
     }
 });

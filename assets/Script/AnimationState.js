@@ -7,30 +7,27 @@
 // Learn life-cycle callbacks:
 //  - [Chinese] https://docs.cocos.com/creator/manual/zh/scripting/life-cycle-callbacks.html
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
-const Emitter = require("EventEmitter")
-const EVENT_NAME = require("NAME_EVENT")
+
+const Emitter = require("./EventEmitter");
+const EVENT_NAME = require("./NAME_EVENT");
 cc.Class({
     extends: cc.Component,
 
-    properties: {
-    },
+    properties: {},
 
     // LIFE-CYCLE CALLBACKS:
 
-    onLoad () {
-        Emitter.instance.registerEvent(EVENT_NAME.CHECK_POSITION,this.sendResult)
+    onLoad() {
+        this.myanimation = this.node.getComponent(cc.Animation);
+        this.myanimation.on('finished', this.onAnimationFinished, this);
+        // Bắt đầu chạy Animation
     },
-    sendResult(data){
-        const sendObject = {
-            isHit:false,
-            shipLength:4,
-            worldPosition:data.position
-        };
-        Emitter.instance.emit(EVENT_NAME.SEND_RESULT,sendObject)
+    onAnimationFinished() {
+        cc.log("xong no hieu ung")
+        Emitter.instance.emit(EVENT_NAME.DESTROY_ANI_NODE)
     },
-    start () {
+    start() {
 
     },
-
     // update (dt) {},
 });
