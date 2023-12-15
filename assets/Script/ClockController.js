@@ -13,17 +13,19 @@ cc.Class({
     extends: cc.Component,
 
     properties: {
+        coldDownTime: 10,
     },
 
     // LIFE-CYCLE CALLBACKS:
 
-    onLoad () {
-       Emitter.instance.registerEvent(EVENT_NAME.COLD_DOWN_CLOCK,this.coldDown.bind(this))
+    onLoad() {
+        Emitter.instance.registerEvent(EVENT_NAME.COLD_DOWN_CLOCK, this.coldDown.bind(this))
     },
-    coldDown(data){
-      cc.log('data')
+    coldDown() {
+        this.coldDownTime--;
+        this.node.getChildByName("Label").getComponent(cc.Label).string = this.coldDownTime;
     },
-    start () {
+    start() {
 
     },
 

@@ -34,6 +34,7 @@ cc.Class({
 
     },
     onClick(data) {
+        cc.log(data)
         if (this.hasShotInTile) return;
         if (this.node.getBoundingBoxToWorld().contains(data)) {
             let clickedChildNode = this.findClickedChildNode(this.node, data);
@@ -49,7 +50,8 @@ cc.Class({
                 }
                 clickedChildNode.getComponent("Tile").hasShoot = true;
                 Emitter.instance.emit("spawnPrefab")
-                Emitter.instance.emit("attackToPosition", targetNode)
+                Emitter.instance.emit(EVENT_NAME.STOP_CLOCK)
+                //Emitter.instance.emit("attackToPosition", targetNode)
                 this.mapController.clickCounter = 0;
             }
 
@@ -76,8 +78,13 @@ cc.Class({
         return null;
     },
     onMouseDown(event) {
-        if (event.getButton() !== cc.Event.EventMouse.BUTTON_LEFT) return;
         this.mousePosition = event.getLocation();
+        const oject = {
+            playerId:0,
+            position:this.mousePosition
+        }
+        Emitter.instance.emit(EVENT_NAME.POSITION,oject)
+        if (event.getButton() !== cc.Event.EventMouse.BUTTON_LEFT) return;
         this.onClick(this.mousePosition)
         event.stopPropagation();
     },

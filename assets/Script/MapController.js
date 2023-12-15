@@ -15,32 +15,20 @@ cc.Class({
 
     properties: {
         clickCounter: 1,
-        coldDownTime: 10,
     },
-
     // LIFE-CYCLE CALLBACKS:
-
     onLoad() {
         Emitter.instance.registerEvent(EVENT_NAME.RESET_TURN, this.resetTurn.bind(this))
         cc.tween(this.node)
             .to(2, {scaleX: 2})
-            .start()
-        cc.tween(this.node)
-            .sequence(
-            cc.tween().delay(1),
-            cc.tween().call(()=>{
-                cc.log('data')
-                Emitter.instance.emit(EVENT_NAME.COLD_DOWN_CLOCK)})
-            ).repeat(10).start()
+            .start();
     },
     resetTurn() {
-        cc.log("da rs")
         this.clickCounter = 1;
-        this.coldDownTime = 10;
     },
     onEnable() {
-        this.clickCounter = 1;
-        this.coldDownTime = 10;
+        this.resetTurn();
+        cc.log("map enable " +this.node.name);
 
     },
     // update (dt) {},

@@ -29,31 +29,33 @@ cc.Class({
         this.node.getComponent(cc.Sprite).spriteFrame = this.bomSprite;
     },
     onAttack(data) {
-        //cc.log(data);
+        cc.log(data);
         //this.node.parent.convertToNodeSpaceAR(cc.v2(data.positionToTarget.x,data.positionToTarget.y))
         cc.tween(this.node)
             .delay(0.94)
             .parallel(
                 cc.tween().to(2,
-                    {position:data.positionToTarget}),
+                    {position:data.worldPosition}),
                 cc.tween().to(0.75, {scale: 2}, {easing: "sineOut"})
                     .then(cc.tween().to(1.25, {scale: 0.5}, {easing: "sineIn"})),
                 cc.tween().to(2, {angle: 360 * 7}))
             .call(() => {
                 //cc.log(this.node.position);
-                this.playAnimationtileTarget(data.targetTile)
-                this.onDestroy();
+                this.playAnimationtileTarget(data)
+                this.node.destroy();
             })
             .start();
     },
-    playAnimationtileTarget(tileTarget) {
-        tileTarget.color = cc.Color.RED;
+    playAnimationtileTarget(data) {
+        Emitter.instance.emit(EVENT_NAME.PLAY_ANI,data)
+       /* tileTarget.color = cc.Color.RED;
         tileTarget.getComponent("Tile").playAnimationAndSound();
-        let hasShip = tileTarget.getComponent("Tile").hasShip;
-        if(hasShip)Emitter.instance.emit(EVENT_NAME.FINISH_SHOOT,true)
-        else Emitter.instance.emit(EVENT_NAME.FINISH_SHOOT,false)
+        let hasShip = tileTarget.getComponent("Tile").hasShip;*/
+        // if(data.isHit)Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP,true)
+        // else Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP,false)
     },
     onDestroy() {
-        this.node.destroy();
+        //this.animation.off('finished', this.onAnimationFinished, this);
+        cc.log("bom xoá")
     }
 });

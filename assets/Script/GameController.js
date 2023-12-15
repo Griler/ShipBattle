@@ -9,43 +9,104 @@
 //  - [English] https://www.cocos2d-x.org/docs/creator/manual/en/scripting/life-cycle-callbacks.html
 const Emitter = require("EventEmitter")
 const EVENT_NAME = require("NAME_EVENT")
+var StateMachine = require('javascript-state-machine');
 
 cc.Class({
     extends: cc.Component,
 
     properties: {
         ballCannon: cc.Prefab,
-        mapPlayer:cc.Node,
-        mapEnemy:cc.Node
+        mapEnemy: cc.Node,
+        mapPlayer: cc.Node,
+        changeSceneNode: cc.Node,
     },
 
     // LIFE-CYCLE CALLBACKS:
 
     onLoad() {
-        Emitter.instance.registerEvent("spawnPrefab", this.spawnPrefab.bind(this))
-        Emitter.instance.registerEvent(EVENT_NAME.FINISH_SHOOT,this.checkShootHitShip.bind(this))
-        Emitter.instance.registerEvent(EVENT_NAME.CHANGE_SCENE,this.changeScene.bind(this))
+        this.playerId = 0;
+        this.enemyId = 1;
+        //Emitter.instance.registerEvent("spawnPrefab", this.spawnPrefab.bind(this))
+        Emitter.instance.registerEvent(EVENT_NAME.IS_SHOOT_SHIP, this.checkShootHitShip.bind(this))
+       // Emitter.instance.registerOnce(EVENT_NAME.CHANGE_SCENE, this.changeScene.bind(this))
+        Emitter.instance.registerEvent(EVENT_NAME.SEND_RESULT, this.playAnimation.bind(this))
+        this.fsm = new StateMachine({
+            init: 'init',
+            transitions: [
+                {name: 'changePlayerScene', from: ['init', 'enemyScene'], to: 'playerScene'},
+                {name: 'changeEnemyScene', from: ['init', 'playerScene'], to: 'enemyScene'},
+                {name: 'changeEndScene', from: ['playerScene', 'enemyScene'], to: 'endScene'},
+            ],
+            methods: {
+                onChangePlayerScene: this.onChangePlayerScene.bind(this),
+                onChangeEnemyScene: this.onChangeEnemyScene.bind(this),
+                onChangeEndScene: this.onChangeEndScene.bind(this),
+                onEnterEnemyScene: this.onEnterEnemyScene.bind(this),
+                onEnterPlayerScene: this.onEnterPlayerScene.bind(this)
+            }
+        });
+        this.fsm.changePlayerScene();
     },
-    spawnPrefab() {
+    onChangePlayerScene() {
+        cc.log("chuyen player");
+        /*        this.changeSceneNode.opacity = 200;
+                this.changeSceneNode.getChildByName("Label").getComponent(cc.Label).string = "Your Turn"
+                cc.tween(this.changeSceneNode)
+                    .to(2, {opacity: 0}).start();
+                this.mapPlayer.active = false;
+                this.mapEnemy.active = true;*/
+    },
+    onChangeEnemyScene() {
+        cc.log("chuyen enemy");
+
+        /*        this.changeSceneNode.opacity = 200;
+                this.changeSceneNode.getChildByName("Label").getComponent(cc.Label).string = "Enemy Turn"
+                cc.tween(this.changeSceneNode)
+                    .to(2, {opacity: 0}).start();
+                this.mapPlayer.active = true;
+                this.mapEnemy.active = false;*/
+    },
+    onEnterEnemyScene() {
+        cc.log("hello enemy");
+        Emitter.instance.registerEvent(EVENT_NAME.POSITION, (data) => {
+            data.playerId = this.playerId;
+            Emitter.instance.emit(EVENT_NAME.CHECK_POSITION, data)
+        })
+    },
+    onEnterPlayerScene() {
+        cc.log("hello player ");
+        Emitter.instance.registerEvent(EVENT_NAME.POSITION, (data) => {
+            data.playerId = this.enemyId;
+            Emitter.instance.emit(EVENT_NAME.CHECK_POSITION, data)
+        })
+    },
+    onChangeEndScene() {
+
+    },
+    playAnimation(data) {
+        cc.log('send result: ' + data)
         let cannonBall = cc.instantiate(this.ballCannon);
         cannonBall.setParent(this.node.parent.parent);
-        cannonBall.position = cc.v2(450,0);
+        cannonBall.position = cc.v2(450, 100);
+        Emitter.instance.emit("attackToPosition", data)
     },
-    checkShootHitShip(data){
-        if(data){
-            Emitter.instance.emit(EVENT_NAME.RESET_TURN,this)
-        }else{
-
+    checkShootHitShip(data) {
+        cc.log(data)
+        if (data) {
+            Emitter.instance.emit(EVENT_NAME.RESET_TURN)
         }
     },
-    changeScene(){
-        if(this.mapPlayer.active === true){
-            this.mapPlayer.active = false;
-            this.mapEnemy.active = true;
-        }else{
-            this.mapPlayer.active = true;
-            this.mapEnemy.active = false;
+    changeScene(data) {
+        cc.log(this.mapEnemy.active)
+        if (this.mapEnemy.active === data) {
+            cc.log("đổi enemy")
+           // this.fsm.changeEnemyScene()
+        } else {
+            cc.log("đổi player")
+            //this.fsm.changePlayerScene()
         }
+    },
+    update(){
+        cc.log(this.fsm.state)
     }
-    // update (dt) {},
 });
