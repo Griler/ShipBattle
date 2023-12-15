@@ -37,7 +37,7 @@ cc.Class({
     },
     sendResult(data){
         const sendObject = {
-            isHit:false,
+            isHit:true,
             shipLength:4,
             worldPosition:data.position
         };

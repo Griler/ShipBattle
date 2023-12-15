@@ -27,7 +27,7 @@ cc.Class({
         this.playerId = 0;
         this.enemyId = 1;
         //Emitter.instance.registerEvent("spawnPrefab", this.spawnPrefab.bind(this))
-        Emitter.instance.registerEvent(EVENT_NAME.IS_SHOOT_SHIP, this.checkShootHitShip.bind(this))
+        //Emitter.instance.registerEvent(EVENT_NAME.IS_SHOOT_SHIP, this.checkShootHitShip.bind(this))
        // Emitter.instance.registerOnce(EVENT_NAME.CHANGE_SCENE, this.changeScene.bind(this))
         Emitter.instance.registerEvent(EVENT_NAME.SEND_RESULT, this.playAnimation.bind(this))
         this.fsm = new StateMachine({
@@ -107,6 +107,5 @@ cc.Class({
         }
     },
     update(){
-        cc.log(this.fsm.state)
     }
 });

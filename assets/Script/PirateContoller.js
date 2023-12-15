@@ -9,7 +9,7 @@ cc.Class({
     onLoad() {
         this._onAttack = this.onAttack.bind(this)
         //this._onAttackAfter = this.onAttackAfter.bind(this)
-        //._onFinal = this.onFinal.bind(this)
+        this._onFinal = this.onFinal.bind(this)
         this._onAttackToAttack = this.onAttackToAttack.bind(this)
         Emitter.instance.registerEvent(EVENT_NAME.IS_SHOOT_SHIP, this.handleState.bind(this))
         this.fsm = new StateMachine({
@@ -17,7 +17,7 @@ cc.Class({
             transitions: [
                 {name: 'attack', from: ['init', 'changeScene'], to: 'attackState'},
                 {name: 'attackAfter', from: 'attackState', to: 'afterAttackState'},
-                //{name: 'final', from: 'attackState', to: 'changeScene'},
+                {name: 'final', from: 'attackState', to: 'changeScene'},
                 {name: 'attackToAttack', from: 'attackState', to: 'attackState'},
             ],
             methods: {
@@ -50,7 +50,7 @@ cc.Class({
             .delay(1)
             .call(() => {
                 //Emitter.instance.emit(EVENT_NAME.CHANGE_SCENE, true)
-                this.fsm.attack();
+                //this.fsm.attack();
             })
             .start()
     },
@@ -86,5 +86,7 @@ cc.Class({
             cc.log("hello")
             this.fsm.final();
         }
+    },
+    update(){
     }
 });

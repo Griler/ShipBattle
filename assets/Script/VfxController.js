@@ -55,12 +55,12 @@ cc.Class({
             bom.getComponent(cc.Animation).play('explosion');
         }
     },
-    onAnimationFinished() {
+/*    onAnimationFinished() {
         cc.log(this)
         //this.isHit = data.isHit
         if (this.isHit) Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, true);
         else Emitter.instance.emit(EVENT_NAME.IS_SHOOT_SHIP, false)
-    },
+    },*/
     onDestroy() {
         this.animation.off('finished', this.onAnimationFinished, this);
 
